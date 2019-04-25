@@ -15,25 +15,40 @@ import Placeholder from "ckeditor5-placeholder";
 import './App.css';
 
 const App = () => {
-  const [editorData, setEditorData] = useState("<p>Hello from CKEditor 5!</p>");
-// bulleted list is missing
+  const initialData = "<p>Hello from CKEditor 5!</p>";
+  let appEditor;
+
+  const insertText = () => {
+    appEditor.model.change(writer => {
+      writer.insertText('{Insert Text}', appEditor.model.document.selection.getFirstPosition());
+    });
+  }
+
+  const submitData = () => {
+    console.log(appEditor.getData());
+  }
+
   return (
     <div className="App">
       <h2>Using CKEditor 5 build in React</h2>
+      <button onClick={insertText}>Insert Text</button>
       <CKEditor
         config={{
           plugins: [Essentials, Heading, Paragraph, Bold, Italic, BlockQuote, Alignment, List, Link, Placeholder],
-          toolbar: ['Heading', '|', 'Bold', 'Italic', 'Alignment', 'BulletedList', 'NumberedList', 'BlockQuote', 'Link', 'Undo', 'Redo', 'Placeholder']
+          toolbar: ['Heading', '|', 'Bold', 'Italic', 'Alignment', 'BulletedList', 'NumberedList', 'BlockQuote', 'Link', 'Undo', 'Redo', 'Placeholder'],
+          placeholderProps: {
+            types: ["First Name", "Last Name", "Date"]
+          }
         }}
         editor={InlineEditor}
-        data={editorData}
+        data={initialData}
         onInit={editor => {
           // You can store the "editor" and use when it is needed.
+          appEditor = editor;
           console.log('Editor is ready to use!', editor);
         }}
         onChange={(event, editor) => {
           const data = editor.getData();
-          setEditorData(data);
           console.log({ event, editor, data });
         }}
         onBlur={editor => {
@@ -43,6 +58,7 @@ const App = () => {
           console.log('Focus.', editor);
         }}
       />
+      <button onClick={submitData}>Submit</button>
     </div>
   );
 }
